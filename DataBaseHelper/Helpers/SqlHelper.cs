@@ -11,8 +11,20 @@ namespace DataBaseHelper.Helpers
     /// <summary>
     /// SqlHelper操作类
     /// </summary>
-    public sealed partial class SqlHelper
+    public sealed partial class SqlHelper : IDBHelper
     {
+        private static SqlHelper singleton;
+             private SqlHelper() { }
+             public static SqlHelper getInstance()
+        {
+            if (singleton == null)
+            {
+                singleton = new SqlHelper();
+                singleton.ConnectionString = "Server=192.168.100.200;Database=JXC;User Id=guest;Password=133;";//"Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb"
+            }
+            return singleton;
+        }
+
         /// <summary>
         /// 批量操作每批次记录数
         /// </summary>
@@ -27,7 +39,7 @@ namespace DataBaseHelper.Helpers
         ///初始化SqlHelper实例
         /// </summary>
         /// <param name="connectionString">数据库连接字符串</param>
-        public SqlHelper(string connectionString)
+        private SqlHelper(string connectionString)
         {
             this.ConnectionString = connectionString;
         }
@@ -51,7 +63,10 @@ namespace DataBaseHelper.Helpers
         {
             return ExecuteNonQuery(ConnectionString, CommandType.Text, commandText, parms);
         }
-
+        public int ExecuteNonQuery(string sql)
+        {
+            return ExecuteNonQuery(sql);
+        }
         /// <summary>
         /// 执行SQL语句,返回影响的行数
         /// </summary>
@@ -933,5 +948,7 @@ namespace DataBaseHelper.Helpers
         #endregion 批量操作
 
         #endregion 静态方法
+
+    
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataBaseHelper.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -48,14 +49,34 @@ namespace DataBaseHelper
         private void button1_Click(object sender, EventArgs e)
         {
             //I53470\SQLEXPRESS
-            Helpers.SqlHelper db = new Helpers.SqlHelper("Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb");
-            var sql="select * from Person";
+            SqlHelper db = SqlHelper.getInstance();//"Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb"
+            //var sql = "select Id, Username, Pwd, Age, RegisterDate, Address1 from Person";
+            //var dt = db.ExecuteDataTable(sql);
+            //dgv.DataSource = dt;
+            //dgv.Columns["Id"].Visible = false;
+            //dgv.Columns["Username"].HeaderText = "用户名";
+            var sql = "SELECT top 10 * FROM  Person";
             var dt = db.ExecuteDataTable(sql);
-            dataGridView1.DataSource = dt;
+            dt.TableName = "Person";
+            dgv.DataSource = dt;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
+            DataTable dt = (DataTable)dgv.DataSource;
+          //  dt.TableName = "Person";
+            SqlProcessor sp = new SqlProcessor();
+          int count=  sp.Save(dt);
+          MessageBox.Show("保存成功:"+count.ToString());
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            OleDbHelper db = OleDbHelper.getInstance();
+            var sql = "SELECT  * FROM  skwtemp";
+            var dt = db.GetTable(sql);
+            dt.TableName = "skwtemp";
+            dgv.DataSource = dt;
 
         }
     }

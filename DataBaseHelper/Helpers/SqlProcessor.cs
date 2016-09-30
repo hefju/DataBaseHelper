@@ -8,31 +8,105 @@ using System.Threading.Tasks;
 
 namespace DataBaseHelper.Helpers
 {
-    class SqlProcessor
+    class SqlProcessor 
     {
-
-        public void Save(DataTable dt)
+        public int Save(DataTable dt,IDBHelper dbhelper)
         {
-            foreach (DataRow dr in dt.Rows)
+            var dtChange = dt.GetChanges();//可能传入没有修改的DataTable
+            if (dtChange == null)
+                return 1;//没有修改也返回1表示保存成功.
+
+            int count=0;
+           // SqlHelper db=SqlHelper.getInstance();
+            foreach (DataRow dr in dtChange.Rows)
             {
+                string sql = "";
                 switch (dr.RowState)
                 {
                     case DataRowState.Added:
+                        sql = GenerateSqlAdded(dr, dtChange);
                         break;
                     case DataRowState.Deleted:
                         break;
                     case DataRowState.Detached:
                         break;
                     case DataRowState.Modified:
+                        sql = GenerateSqlModified(dr, dtChange);
                         break;
                     case DataRowState.Unchanged:
                         break;
                     default:
                         break;
                 }
-       
+                if (sql != "")
+                {
+                    count += dbhelper.ExecuteNonQuery(sql);
+                    Console.WriteLine(sql);//测试输出语句
+                }
             }
+            dt.AcceptChanges();
+            return count;
         }
+
+        //
+        private string GenerateSqlAdded(DataRow dr, DataTable dtChange)
+        {
+            var sql = "Insert into " +dtChange.TableName + "(";
+
+            List<string> columns = new List<string>();//列名
+            List<string> values = new List<string>();//插入值
+
+            List<DataColumn> fileds = new List<DataColumn>();//字段集合
+            foreach (DataColumn dc in dtChange.Columns)
+            {
+                fileds.Add(dc);
+            }
+            for (int i = 0; i < fileds.Count; i++)
+            {
+                var f = fileds[i];
+                var colname = f.ColumnName.ToLower();
+                if (colname == "id")
+                    continue;
+                columns.Add(f.ColumnName);
+                values.Add("'" + dr[i].ToString() + "'");
+            }
+
+            sql += string.Join(",", columns) + ")";
+            sql += " VALUES (" + string.Join(",", values) + ")";
+
+            return sql;
+        }
+
+        private string GenerateSqlModified(DataRow dr, DataTable dtChange)
+        {
+            var sql = "UPDATE " +dtChange.TableName + " set ";
+            List<string> fileds = new List<string>();
+
+            var changedCols = new List<DataColumn>();//修改过的字段
+            foreach (DataColumn dc in dtChange.Columns)
+            {
+                if (!dr[dc, DataRowVersion.Original].Equals(dr[dc, DataRowVersion.Current])) /* skipped Proposed as indicated by a commenter */
+                    changedCols.Add(dc);
+            }
+
+            for (int i = 0; i < changedCols.Count; i++)
+            {
+                var f = changedCols[i];
+                fileds.Add(f.ColumnName + "='" + dr[f.ColumnName].ToString() + "'");
+            }
+            sql += string.Join(",", fileds);
+            sql += " where id=" + dr["id"].ToString();
+
+            return sql;
+        }
+
+
+
+      
+
+
+
+
 
         private void Update(DataTable dt2)
         {

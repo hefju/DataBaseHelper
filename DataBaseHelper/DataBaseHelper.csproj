@@ -56,6 +56,8 @@
     <Compile Include="FrmAbout.Designer.cs">
       <DependentUpon>FrmAbout.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\IDBHelper.cs" />
+    <Compile Include="Helpers\OleDbHelper.cs" />
     <Compile Include="Helpers\SqlHelper.cs" />
     <Compile Include="Helpers\SqlProcessor.cs" />
     <Compile Include="MainForm.cs">
