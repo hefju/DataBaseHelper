@@ -66,7 +66,7 @@ namespace DataBaseHelper
             DataTable dt = (DataTable)dgv.DataSource;
           //  dt.TableName = "Person";
             SqlProcessor sp = new SqlProcessor();
-          int count=  sp.Save(dt);
+          int count=  sp.Save(dt,SqlHelper.getInstance());
           MessageBox.Show("保存成功:"+count.ToString());
         }
 
@@ -77,6 +77,24 @@ namespace DataBaseHelper
             var dt = db.GetTable(sql);
             dt.TableName = "skwtemp";
             dgv.DataSource = dt;
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DataTable dt = (DataTable)dgv.DataSource;
+            SqlProcessor sp = new SqlProcessor();
+            int count = sp.Save(dt, OleDbHelper.getInstance());
+            MessageBox.Show("保存成功:" + count.ToString());
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
 
         }
     }

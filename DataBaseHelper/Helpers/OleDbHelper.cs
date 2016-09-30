@@ -151,11 +151,14 @@ namespace DataBaseHelper.Helpers
 
             return affect;
         }
-        public int ExecuteNonQuery(string sql)
+        //public int ExecuteNonQuery(string sql)
+        //{
+        //    return ExecSQL(sql);
+        //}
+        public int ExecuteNonQuery2(string sql)
         {
-            return ExecSQL(sql);
+            return ExecSQL(sql, new  OleDbParameter[0]);
         }
-
         /// <summary>
         /// 新增记录返回ID
         /// </summary>
@@ -492,6 +495,8 @@ namespace DataBaseHelper.Helpers
         }
         #endregion
 
-  
+
+
+    
     }
 }

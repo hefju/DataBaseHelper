@@ -20,7 +20,8 @@ namespace DataBaseHelper.Helpers
             if (singleton == null)
             {
                 singleton = new SqlHelper();
-                singleton.ConnectionString = "Server=192.168.100.200;Database=JXC;User Id=guest;Password=133;";//"Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb"
+               // singleton.ConnectionString = "Server=192.168.100.200;Database=JXC;User Id=guest;Password=133;";
+                singleton.ConnectionString = "Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb";
             }
             return singleton;
         }
@@ -63,9 +64,9 @@ namespace DataBaseHelper.Helpers
         {
             return ExecuteNonQuery(ConnectionString, CommandType.Text, commandText, parms);
         }
-        public int ExecuteNonQuery(string sql)
+        public int ExecuteNonQuery2(string commandText)
         {
-            return ExecuteNonQuery(sql);
+            return ExecuteNonQuery(commandText);
         }
         /// <summary>
         /// 执行SQL语句,返回影响的行数
@@ -949,6 +950,8 @@ namespace DataBaseHelper.Helpers
 
         #endregion 静态方法
 
-    
+
+
+      
     }
 }

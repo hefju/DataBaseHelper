@@ -40,7 +40,7 @@ namespace DataBaseHelper.Helpers
                 }
                 if (sql != "")
                 {
-                    count += dbhelper.ExecuteNonQuery(sql);
+                    count += dbhelper.ExecuteNonQuery2(sql);
                     Console.WriteLine(sql);//测试输出语句
                 }
             }
