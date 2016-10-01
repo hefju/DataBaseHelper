@@ -86,16 +86,24 @@ namespace DataBaseHelper
             SqlProcessor sp = new SqlProcessor();
             int count = sp.Save(dt, OleDbHelper.getInstance());
             MessageBox.Show("保存成功:" + count.ToString());
+ 
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-
+            SQLiteHelper db = SQLiteHelper.getInstance();
+            var sql = "SELECT  * FROM  PageProfile";
+            var dt = db.GetTable(sql);
+            dt.TableName = "PageProfile";
+            dgv.DataSource = dt;
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-
+            DataTable dt = (DataTable)dgv.DataSource;
+            SqlProcessor sp = new SqlProcessor();
+            int count = sp.Save(dt, SQLiteHelper.getInstance());
+            MessageBox.Show("保存成功:" + count.ToString());
         }
     }
 }

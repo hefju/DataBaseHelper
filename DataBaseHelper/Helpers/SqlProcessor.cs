@@ -12,6 +12,8 @@ namespace DataBaseHelper.Helpers
     {
         public int Save(DataTable dt,IDBHelper dbhelper)
         {
+            if (dt == null)
+                return 0;//没有修改也返回1表示保存成功.
             var dtChange = dt.GetChanges();//可能传入没有修改的DataTable
             if (dtChange == null)
                 return 1;//没有修改也返回1表示保存成功.
