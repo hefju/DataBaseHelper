@@ -60,6 +60,7 @@
     <Compile Include="FrmAbout.Designer.cs">
       <DependentUpon>FrmAbout.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DBManager.cs" />
     <Compile Include="Helpers\IDBHelper.cs" />
     <Compile Include="Helpers\OleDbHelper.cs" />
     <Compile Include="Helpers\SqlHelper.cs" />
