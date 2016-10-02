@@ -109,7 +109,7 @@ namespace DataBaseHelper
         {
             DataTable dt = (DataTable)dgv.DataSource;
           //  dt.TableName = "Person";
-            SqlProcessor sp = new SqlProcessor();
+            SqlCreater sp = new SqlCreater();
           int count=  sp.Save(dt,SqlHelper.getInstance());
           MessageBox.Show("保存成功:"+count.ToString());
         }
@@ -127,7 +127,7 @@ namespace DataBaseHelper
         private void button3_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)dgv.DataSource;
-            SqlProcessor sp = new SqlProcessor();
+            SqlCreater sp = new SqlCreater();
             int count = sp.Save(dt, OleDbHelper.getInstance());
             MessageBox.Show("保存成功:" + count.ToString());
  
@@ -145,7 +145,7 @@ namespace DataBaseHelper
         private void button5_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)dgv.DataSource;
-            SqlProcessor sp = new SqlProcessor();
+            SqlCreater sp = new SqlCreater();
             int count = sp.Save(dt, SQLiteHelper.getInstance());
             MessageBox.Show("保存成功:" + count.ToString());
         }
@@ -169,7 +169,7 @@ namespace DataBaseHelper
         {
             DataTable dt = (DataTable)dgv.DataSource;
             //  dt.TableName = "Person";
-            SqlProcessor sp = new SqlProcessor();
+            SqlCreater sp = new SqlCreater();
             int count = sp.Save(dt, SqlHelper.getInstance());
             MessageBox.Show("保存成功:" + count.ToString());
         }
@@ -187,7 +187,7 @@ namespace DataBaseHelper
         private void label6_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)dgv.DataSource;
-            SqlProcessor sp = new SqlProcessor();
+            SqlCreater sp = new SqlCreater();
             int count = sp.Save(dt, OleDbHelper.getInstance());
             MessageBox.Show("保存成功:" + count.ToString());
         }
@@ -204,7 +204,7 @@ namespace DataBaseHelper
         private void label10_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)dgv.DataSource;
-            SqlProcessor sp = new SqlProcessor();
+            SqlCreater sp = new SqlCreater();
             int count = sp.Save(dt, SQLiteHelper.getInstance());
             MessageBox.Show("保存成功:" + count.ToString());
         }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataBaseHelper.Helpers
 {
-    class SqlProcessor 
+    class SqlCreater 
     {
         public int Save(DataTable dt,IDBHelper dbhelper)
         {

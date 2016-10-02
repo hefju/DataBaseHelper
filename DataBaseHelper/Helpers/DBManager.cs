@@ -11,6 +11,12 @@ namespace DataBaseHelper.Helpers
     /// </summary>
     class DBManager
     {
+        Dictionary<string, IDBHelper> dblist = new Dictionary<string, IDBHelper>();
+        SqlHelper DefaultMssql;
+        SQLiteHelper DefaultSqlite;
+        OleDbHelper DefaultAccess;
+
+
 
     }
 }
