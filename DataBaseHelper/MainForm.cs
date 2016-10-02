@@ -16,12 +16,20 @@ namespace DataBaseHelper
         public MainForm()
         {
             InitializeComponent();
+            WinUI.SetButtonImage(button12, "btnblue");
+            WinUI.SetButtonImage(pictureBox1, "btnblue");
+
+            List<Image> imgs = new List<Image>();
+            imgs.Add(Image.FromFile( @"images\btnblue0.png"));
+            imgs.Add(Image.FromFile( @"images\btnblue1.png"));
+            imgs.Add(Image.FromFile( @"images\btnblue2.png"));
+            WinUI.SetLabelImage(label4, imgs);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             //http://www.111cn.net/database/mssqlserver/45135.htm
-
+            //label4
         }
 
         private void label3_Click(object sender, EventArgs e)
