@@ -10,25 +10,163 @@ namespace DataBaseHelper.Helpers
 {
     class OleDbHelper : IDBHelper
     {
-        private static OleDbHelper singleton;
-         private OleDbHelper() { }
-         public static OleDbHelper getInstance()
+        //private static OleDbHelper singleton;
+        // private OleDbHelper() { }
+        // public static OleDbHelper getInstance()
+        //{
+        //    if (singleton == null)
+        //    {
+        //        singleton = new OleDbHelper();
+        //        singleton.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=test.mdb;User Id=admin;Jet OLEDB:Database Password=1;";//"Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb"
+        //    }
+        //    return singleton;
+        //}
+        public OleDbHelper(string connectionString)
         {
-            if (singleton == null)
-            {
-                singleton = new OleDbHelper();
-                singleton.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=test.mdb;User Id=admin;Jet OLEDB:Database Password=1;";//"Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb"
-            }
-            return singleton;
+            this.ConnectionString = connectionString;
         }
 
         #region 通用方法
-         private OleDbConnection con;
-        private String GetOleDbConnection()
-        {
-            return ConnectionString;
-        }
+        private OleDbConnection con;
+        //private String GetOleDbConnection()
+        //{
+        //    return ConnectionString;
+        //}
         public string ConnectionString { get; set; }
+   
+
+        #region IDBHelper接口
+        public int ExecuteNonQuery2(string sql)
+        {
+            return ExecSQL(sql, new OleDbParameter[0]);
+        }
+        public int ExecuteNonQuery(string sql)
+        {
+            return ExecSQL(sql, new OleDbParameter[0]);
+        }
+
+        public object ExecuteScalar(string sql)
+        {
+            try
+            {
+                string ConnStr = ConnectionString;
+                using (OleDbConnection conn = new OleDbConnection(ConnStr))
+                {
+                    OleDbCommand cmd = new OleDbCommand(sql, conn);
+                    PrepareCommand(cmd, conn, (OleDbTransaction)null, CommandType.Text, sql, null);
+                    return cmd.ExecuteScalar();
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return null;
+        }
+
+        public DataTable GetDataTable(string sql)
+        {
+            return GetTable(sql, new OleDbParameter[0]);
+        }
+
+
+        #endregion
+
+        #region GetData
+
+        public DataTable GetTable(string sql, params OleDbParameter[] param)//根据指定的SQL语句,返回DataTable
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                String ConnStr =ConnectionString;
+                using (OleDbConnection conn = new OleDbConnection(ConnStr))
+                {
+                    OleDbCommand cmd = new OleDbCommand();
+                    PrepareCommand(cmd, conn, (OleDbTransaction)null, CommandType.Text, sql, param);
+
+                    OleDbDataAdapter da = new OleDbDataAdapter(cmd);
+
+                    da.Fill(dt);
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return dt;
+        }
+
+        public int ExecSQL(string sql, params  OleDbParameter[] param)//执行SQL语句
+        {
+            int affect = 0;
+            try
+            {
+                String ConnStr =ConnectionString;
+                using (OleDbConnection conn = new OleDbConnection(ConnStr))
+                {
+                    OleDbCommand cmd = new OleDbCommand(sql, conn);
+                    cmd.Parameters.AddRange(param);
+                    conn.Open();
+                    affect = cmd.ExecuteNonQuery();
+                    conn.Close();
+                    return affect;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return affect;
+        }
+        //public int ExecuteNonQuery(string sql)
+        //{
+        //    return ExecSQL(sql);
+        //}
+    
+        /// <summary>
+        /// 新增记录返回ID
+        /// </summary>
+        /// <param name="sql">插入语句</param>
+        /// <param name="tableName">表名</param>
+        /// <param name="param">参数列表</param>
+        /// <returns></returns>
+        public int InsertObject(string sql, string tableName, params  OleDbParameter[] param)//插入对象并返回ID
+        {
+            int rowID = 0;
+            using (OleDbConnection connection = new OleDbConnection(ConnectionString))
+            {
+                connection.Open();
+                using (OleDbTransaction trans = connection.BeginTransaction())
+                {
+                    OleDbCommand cmd = new OleDbCommand();
+                    try
+                    {
+                        cmd.Connection = connection;
+                        cmd.Transaction = trans;
+                        cmd.CommandText = sql;// "INSERT INTO...";
+                        cmd.ExecuteNonQuery();
+                        cmd.CommandText = "select max(id) from " + tableName;// " SELECT @@INDENTITY as newID";
+
+                        rowID = (Int32)cmd.ExecuteScalar();
+                        trans.Commit();
+                        connection.Close();
+                    }
+                    catch (Exception E)
+                    {
+                        trans.Rollback();
+                        connection.Close();
+                        throw new Exception(E.Message);
+                    }
+                }
+            }
+            return rowID;
+        }
+
+        #endregion
 
 
         /// <summary>
@@ -101,126 +239,6 @@ namespace DataBaseHelper.Helpers
 
         #endregion
 
-
-
-        #region GetData
-        public  DataTable GetTable(string sql, params OleDbParameter[] param)//根据指定的SQL语句,返回DataTable
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                String ConnStr = GetOleDbConnection();
-                using (OleDbConnection conn = new OleDbConnection(ConnStr))
-                {
-                    OleDbCommand cmd = new OleDbCommand();
-                    PrepareCommand(cmd, conn, (OleDbTransaction)null, CommandType.Text, sql, param);
-
-                    OleDbDataAdapter da = new OleDbDataAdapter(cmd);
-
-                    da.Fill(dt);
-                }
-
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            return dt;
-        }
-
-        public  int ExecSQL(string sql, params  OleDbParameter[] param)//执行SQL语句
-        {
-            int affect = 0;
-            try
-            {
-                String ConnStr = GetOleDbConnection();
-                using (OleDbConnection conn = new OleDbConnection(ConnStr))
-                {
-                    OleDbCommand cmd = new OleDbCommand(sql, conn);
-                    cmd.Parameters.AddRange(param);
-                    conn.Open();
-                    affect = cmd.ExecuteNonQuery();
-                    conn.Close();
-                    return affect;
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
-            return affect;
-        }
-        //public int ExecuteNonQuery(string sql)
-        //{
-        //    return ExecSQL(sql);
-        //}
-        public int ExecuteNonQuery2(string sql)
-        {
-            return ExecSQL(sql, new  OleDbParameter[0]);
-        }
-        /// <summary>
-        /// 新增记录返回ID
-        /// </summary>
-        /// <param name="sql">插入语句</param>
-        /// <param name="tableName">表名</param>
-        /// <param name="param">参数列表</param>
-        /// <returns></returns>
-        public  int InsertObject(string sql, string tableName, params  OleDbParameter[] param)//插入对象并返回ID
-        {
-            int rowID = 0;
-            using (OleDbConnection connection = new OleDbConnection(GetOleDbConnection()))
-            {
-                connection.Open();
-                using (OleDbTransaction trans = connection.BeginTransaction())
-                {
-                    OleDbCommand cmd = new OleDbCommand();
-                    try
-                    {
-                        cmd.Connection = connection;
-                        cmd.Transaction = trans;
-                        cmd.CommandText = sql;// "INSERT INTO...";
-                        cmd.ExecuteNonQuery();
-                        cmd.CommandText = "select max(id) from " + tableName;// " SELECT @@INDENTITY as newID";
-
-                        rowID = (Int32)cmd.ExecuteScalar();
-                        trans.Commit();
-                        connection.Close();
-                    }
-                    catch (Exception E)
-                    {
-                        trans.Rollback();
-                        connection.Close();
-                        throw new Exception(E.Message);
-                    }
-                }
-            }
-            return rowID;
-        }
-
-
-        public  object GetObject(string sql, params  OleDbParameter[] param)//返回执行结果的第一行第一列
-        {
-            try
-            {
-                string ConnStr = GetOleDbConnection();
-                using (OleDbConnection conn = new OleDbConnection(ConnStr))
-                {
-                    OleDbCommand cmd = new OleDbCommand(sql, conn);
-                    PrepareCommand(cmd, conn, (OleDbTransaction)null, CommandType.Text, sql, param);
-                    return cmd.ExecuteScalar();
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
-            return null;
-        }
-        #endregion
-
-
         #region 执行sql字符串
         /// <summary>   
         /// 执行不带参数的SQL语句   
@@ -229,7 +247,7 @@ namespace DataBaseHelper.Helpers
         /// <returns></returns>   
         public  int ExecuteSql(String Sqlstr)
         {
-            String ConnStr = GetOleDbConnection();
+            String ConnStr =ConnectionString;
             using (OleDbConnection conn = new OleDbConnection(ConnStr))
             {
                 OleDbCommand cmd = new OleDbCommand();
@@ -243,7 +261,7 @@ namespace DataBaseHelper.Helpers
         }
         public  object ExecuteSqlScalar(String Sqlstr)
         {
-            String ConnStr = GetOleDbConnection();
+            String ConnStr =ConnectionString;
             using (OleDbConnection conn = new OleDbConnection(ConnStr))
             {
                 OleDbCommand cmd = new OleDbCommand();
@@ -267,7 +285,7 @@ namespace DataBaseHelper.Helpers
         /// <returns></returns>   
         public  int ExecuteSql(String Sqlstr, OleDbParameter[] param)
         {
-            String ConnStr = GetOleDbConnection();
+            String ConnStr =ConnectionString;
             using (OleDbConnection conn = new OleDbConnection(ConnStr))
             {
                 OleDbCommand cmd = new OleDbCommand();
@@ -287,7 +305,7 @@ namespace DataBaseHelper.Helpers
         /// <returns></returns>   
         public  OleDbDataReader ExecuteReader(String Sqlstr)
         {
-            String ConnStr = GetOleDbConnection();
+            String ConnStr =ConnectionString;
             OleDbConnection conn = new OleDbConnection(ConnStr);//返回DataReader时,是不可以用using()的   
             try
             {
@@ -309,7 +327,7 @@ namespace DataBaseHelper.Helpers
         /// <returns></returns>   
         public  DataTable ExecuteDt(String Sqlstr)
         {
-            String ConnStr = GetOleDbConnection();
+            String ConnStr =ConnectionString;
             using (OleDbConnection conn = new OleDbConnection(ConnStr))
             {
                 OleDbDataAdapter da = new OleDbDataAdapter(Sqlstr, conn);
@@ -327,7 +345,7 @@ namespace DataBaseHelper.Helpers
         /// <returns></returns>   
         public  DataSet ExecuteDs(String Sqlstr)
         {
-            String ConnStr = GetOleDbConnection();
+            String ConnStr =ConnectionString;
             using (OleDbConnection conn = new OleDbConnection(ConnStr))
             {
                 OleDbDataAdapter da = new OleDbDataAdapter(Sqlstr, conn);
@@ -469,7 +487,7 @@ namespace DataBaseHelper.Helpers
             if (con == null)
             {
                 //这里不仅需要using System.Configuration;还要在引用目录里添加   
-                con = new OleDbConnection(GetOleDbConnection());
+                con = new OleDbConnection(ConnectionString);
                 con.Open();
             }
         }

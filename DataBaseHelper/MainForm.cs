@@ -93,12 +93,13 @@ namespace DataBaseHelper
         private void button1_Click(object sender, EventArgs e)
         {
             //I53470\SQLEXPRESS
-            SqlHelper db = SqlHelper.getInstance();//"Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb"
+        //    SqlHelper db = SqlHelper.getInstance();//"Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb"
             //var sql = "select Id, Username, Pwd, Age, RegisterDate, Address1 from Person";
             //var dt = db.ExecuteDataTable(sql);
             //dgv.DataSource = dt;
             //dgv.Columns["Id"].Visible = false;
             //dgv.Columns["Username"].HeaderText = "用户名";
+            var db = DBManager.GetDefaultMssql();
             var sql = "SELECT top 10 * FROM  Person";
             var dt = db.ExecuteDataTable(sql);
             dt.TableName = "Person";
@@ -110,13 +111,13 @@ namespace DataBaseHelper
             DataTable dt = (DataTable)dgv.DataSource;
           //  dt.TableName = "Person";
             SqlCreater sp = new SqlCreater();
-          int count=  sp.Save(dt,SqlHelper.getInstance());
+          int count=  sp.Save(dt,DBManager.GetDefaultMssql());
           MessageBox.Show("保存成功:"+count.ToString());
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            OleDbHelper db = OleDbHelper.getInstance();
+            var db = DBManager.GetDefaultAccess();
             var sql = "SELECT  * FROM  skwtemp";
             var dt = db.GetTable(sql);
             dt.TableName = "skwtemp";
@@ -128,16 +129,16 @@ namespace DataBaseHelper
         {
             DataTable dt = (DataTable)dgv.DataSource;
             SqlCreater sp = new SqlCreater();
-            int count = sp.Save(dt, OleDbHelper.getInstance());
+            int count = sp.Save(dt, DBManager.GetDefaultAccess());
             MessageBox.Show("保存成功:" + count.ToString());
  
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            SQLiteHelper db = SQLiteHelper.getInstance();
+            SQLiteHelper db = DBManager.GetDefaultSqlite();
             var sql = "SELECT  * FROM  PageProfile";
-            var dt = db.GetTable(sql);
+            var dt = db.GetDataTable(sql);
             dt.TableName = "PageProfile";
             dgv.DataSource = dt;
         }
@@ -146,14 +147,14 @@ namespace DataBaseHelper
         {
             DataTable dt = (DataTable)dgv.DataSource;
             SqlCreater sp = new SqlCreater();
-            int count = sp.Save(dt, SQLiteHelper.getInstance());
+            int count = sp.Save(dt, DBManager.GetDefaultSqlite());
             MessageBox.Show("保存成功:" + count.ToString());
         }
 
         private void label4_Click(object sender, EventArgs e)
         {
             //I53470\SQLEXPRESS
-            SqlHelper db = SqlHelper.getInstance();//"Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb"
+            SqlHelper db = DBManager.GetDefaultMssql();//"Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb"
             //var sql = "select Id, Username, Pwd, Age, RegisterDate, Address1 from Person";
             //var dt = db.ExecuteDataTable(sql);
             //dgv.DataSource = dt;
@@ -170,13 +171,13 @@ namespace DataBaseHelper
             DataTable dt = (DataTable)dgv.DataSource;
             //  dt.TableName = "Person";
             SqlCreater sp = new SqlCreater();
-            int count = sp.Save(dt, SqlHelper.getInstance());
+            int count = sp.Save(dt,DBManager.GetDefaultMssql());
             MessageBox.Show("保存成功:" + count.ToString());
         }
 
         private void label7_Click(object sender, EventArgs e)
         {
-            OleDbHelper db = OleDbHelper.getInstance();
+            OleDbHelper db = DBManager.GetDefaultAccess();
             var sql = "SELECT  * FROM  skwtemp";
             var dt = db.GetTable(sql);
             dt.TableName = "skwtemp";
@@ -188,15 +189,15 @@ namespace DataBaseHelper
         {
             DataTable dt = (DataTable)dgv.DataSource;
             SqlCreater sp = new SqlCreater();
-            int count = sp.Save(dt, OleDbHelper.getInstance());
+            int count = sp.Save(dt, DBManager.GetDefaultAccess());
             MessageBox.Show("保存成功:" + count.ToString());
         }
 
         private void label11_Click(object sender, EventArgs e)
         {
-            SQLiteHelper db = SQLiteHelper.getInstance();
+            SQLiteHelper db = DBManager.GetDefaultSqlite();
             var sql = "SELECT  * FROM  PageProfile";
-            var dt = db.GetTable(sql);
+            var dt = db.GetDataTable(sql);
             dt.TableName = "PageProfile";
             dgv.DataSource = dt;
         }
@@ -205,7 +206,7 @@ namespace DataBaseHelper
         {
             DataTable dt = (DataTable)dgv.DataSource;
             SqlCreater sp = new SqlCreater();
-            int count = sp.Save(dt, SQLiteHelper.getInstance());
+            int count = sp.Save(dt, DBManager.GetDefaultSqlite());
             MessageBox.Show("保存成功:" + count.ToString());
         }
 

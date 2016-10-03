@@ -13,58 +13,52 @@ namespace DataBaseHelper.Helpers
     /// </summary>
     public class SQLiteHelper : IDBHelper
     {
-        private static SQLiteHelper singleton;
-        private SQLiteHelper() { }
-        public static SQLiteHelper getInstance()
-        {
-            if (singleton == null)
-            {
-                singleton = new SQLiteHelper();
-               // singleton.ConnectionString = "Server=192.168.100.200;Database=JXC;User Id=guest;Password=133;";
-                singleton.ConnectionString = "Data Source=test.db;Version=3;";
-            }
-            return singleton;
-        }
-        private SQLiteHelper(string connectionString)
+        //private static SQLiteHelper singleton;
+        //private SQLiteHelper() { }
+        //public static SQLiteHelper getInstance()
+        //{
+        //    if (singleton == null)
+        //    {
+        //        singleton = new SQLiteHelper();
+        //       // singleton.ConnectionString = "Server=192.168.100.200;Database=JXC;User Id=guest;Password=133;";
+        //        singleton.ConnectionString = "Data Source=test.db;Version=3;";
+        //    }
+        //    return singleton;
+        //}
+        public SQLiteHelper(string connectionString)
         {
             this.ConnectionString = connectionString;
         }
-                public string ConnectionString { get; set; }
+        public string ConnectionString { get; set; }
 
-                #region 我的
-                public DataTable GetTable(string connectionString, string sql)
-                {
-                    if (sql.Contains("--")) return new DataTable();
-                    SQLiteCommand cmd = new SQLiteCommand(sql);
-                    return ExecuteDataSet(connectionString, cmd).Tables[0];
-                }
+        #region IDBHelper接口
+        public int ExecuteNonQuery2(string sql)
+        {
+            if (sql.Contains("--")) return 0;
+            SQLiteCommand cmd = new SQLiteCommand(sql);
+            return ExecuteNonQuery(ConnectionString, cmd);
+        }
+        public int ExecuteNonQuery(string sql)
+        {
+            if (sql.Contains("--")) return 0;
+            SQLiteCommand cmd = new SQLiteCommand(sql);
+            return ExecuteNonQuery(ConnectionString, cmd);
+        }
 
-                public int ExecuteNonQuery(string connectionString, string sql)
-                {
-                    if (sql.Contains("--")) return 0;
-                    SQLiteCommand cmd = new SQLiteCommand(sql);
-                    return ExecuteNonQuery(connectionString, cmd);
-                }
+        public object ExecuteScalar(string sql)
+        {
+            if (sql.Contains("--")) return null;
+            SQLiteCommand cmd = new SQLiteCommand(sql);
+            return ExecuteScalar(ConnectionString, cmd);
+        }
 
-                public object ExecuteScalar(string connectionString, string sql)
-                {
-                    if (sql.Contains("--")) return null;
-                    SQLiteCommand cmd = new SQLiteCommand(sql);
-                    return ExecuteScalar(connectionString, cmd);
-                }
-
-                public int ExecuteNonQuery2(string sql)
-                {
-                    return ExecuteNonQuery(ConnectionString, sql);
-                }
-                public DataTable GetTable( string sql)
-                {
-                    if (sql.Contains("--")) return new DataTable();
-                    SQLiteCommand cmd = new SQLiteCommand(sql);
-                    return ExecuteDataSet(ConnectionString, cmd).Tables[0];
-                }
-                #endregion
-           
+        public DataTable GetDataTable(string sql)
+        {
+            if (sql.Contains("--")) return new DataTable();
+            SQLiteCommand cmd = new SQLiteCommand(sql);
+            return ExecuteDataSet(ConnectionString, cmd).Tables[0];
+        }
+        #endregion
 
 
 

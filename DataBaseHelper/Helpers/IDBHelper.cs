@@ -11,5 +11,10 @@ namespace DataBaseHelper.Helpers
     interface IDBHelper
     {
         int ExecuteNonQuery2(string sql);
+
+        int ExecuteNonQuery(string sql);
+
+        object ExecuteScalar(string sql);
+        DataTable GetDataTable(string sql);
     }
 }

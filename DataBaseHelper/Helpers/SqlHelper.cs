@@ -13,17 +13,26 @@ namespace DataBaseHelper.Helpers
     /// </summary>
     public sealed partial class SqlHelper : IDBHelper
     {
-        private static SqlHelper singleton;
-             private SqlHelper() { }
-             public static SqlHelper getInstance()
+        //private static SqlHelper singleton;
+        //     private SqlHelper() { }
+        //     public static SqlHelper getInstance()
+        //{
+        //    if (singleton == null)
+        //    {
+        //        singleton = new SqlHelper();
+        //       // singleton.ConnectionString = "Server=192.168.100.200;Database=JXC;User Id=guest;Password=133;";
+        //        singleton.ConnectionString = "Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb";
+        //    }
+        //    return singleton;
+        //}
+
+        /// <summary>
+        ///初始化SqlHelper实例
+        /// </summary>
+        /// <param name="connectionString">数据库连接字符串</param>
+        public SqlHelper(string connectionString)
         {
-            if (singleton == null)
-            {
-                singleton = new SqlHelper();
-               // singleton.ConnectionString = "Server=192.168.100.200;Database=JXC;User Id=guest;Password=133;";
-                singleton.ConnectionString = "Data Source=I53470\\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=mytestdb";
-            }
-            return singleton;
+            this.ConnectionString = connectionString;
         }
 
         /// <summary>
@@ -36,19 +45,36 @@ namespace DataBaseHelper.Helpers
         /// </summary>
         public static int CommandTimeOut = 600;
 
-        /// <summary>
-        ///初始化SqlHelper实例
-        /// </summary>
-        /// <param name="connectionString">数据库连接字符串</param>
-        private SqlHelper(string connectionString)
-        {
-            this.ConnectionString = connectionString;
-        }
+        
 
         /// <summary>
         /// 数据库连接字符串
         /// </summary>
         public string ConnectionString { get; set; }
+
+        #region IDBHelper接口
+        public int ExecuteNonQuery2(string sql)
+        {
+            return ExecuteNonQuery(sql,new SqlParameter[0]);
+        }
+
+        public int ExecuteNonQuery(string sql)
+        {
+            return ExecuteNonQuery(sql, new SqlParameter[0]);
+        }
+
+        public object ExecuteScalar(string sql)
+        {
+            if (sql.Contains("--")) return null;
+            return ExecuteScalar(ConnectionString, sql);
+        }
+
+        public DataTable GetDataTable(string sql)
+        {
+            if (sql.Contains("--")) return new DataTable();
+            return ExecuteDataSet(ConnectionString, sql).Tables[0];
+        }
+        #endregion
 
         #region 实例方法
 
@@ -64,10 +90,7 @@ namespace DataBaseHelper.Helpers
         {
             return ExecuteNonQuery(ConnectionString, CommandType.Text, commandText, parms);
         }
-        public int ExecuteNonQuery2(string commandText)
-        {
-            return ExecuteNonQuery(commandText);
-        }
+
         /// <summary>
         /// 执行SQL语句,返回影响的行数
         /// </summary>

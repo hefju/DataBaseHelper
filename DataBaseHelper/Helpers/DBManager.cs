@@ -9,14 +9,65 @@ namespace DataBaseHelper.Helpers
     /// <summary>
     /// 数据库管理,提供多个数据库操作
     /// </summary>
-    class DBManager
+   static class DBManager
     {
-        Dictionary<string, IDBHelper> dblist = new Dictionary<string, IDBHelper>();
-        SqlHelper DefaultMssql;
-        SQLiteHelper DefaultSqlite;
-        OleDbHelper DefaultAccess;
+       static Dictionary<string, IDBHelper> dblist = new Dictionary<string, IDBHelper>();
+        static SqlHelper DefaultMssql;
+        static SQLiteHelper DefaultSqlite;
+        static OleDbHelper DefaultAccess;
+
+         static DBManager()
+        {
+            DefaultMssql = new SqlHelper("Server=192.168.100.200;Database=JXC;User Id=guest;Password=133;");
+            DefaultSqlite = new SQLiteHelper("");
+            DefaultAccess = new OleDbHelper("");
+        }
+
+        public static SqlHelper GetDefaultMssql()
+        {
+            return DefaultMssql;
+        }
+        public static SQLiteHelper GetDefaultSqlite()
+        {
+            return DefaultSqlite;
+        }
+        public static OleDbHelper GetDefaultAccess()
+        {
+            return DefaultAccess;
+        }
+        public static void AddDbhelper(DbType type, string name, string connectstring)
+        {
+            switch (type)
+            {
+                case DbType.SqlHelper:
+                    dblist[name] = new SqlHelper(connectstring);
+                    break;
+                case DbType.SQLiteHelper:
+                    dblist[name] = new SQLiteHelper(connectstring);
+                    break;
+                case DbType.OleDbHelper:
+                    dblist[name] = new OleDbHelper(connectstring);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        public static IDBHelper GetDbhelper(string name)
+        {
+            if (dblist.ContainsKey(name))
+            {
+                return dblist[name];
+            }
+            else
+                return null;
+        }
 
 
 
+    }
+    public enum DbType{
+        SqlHelper,SQLiteHelper,OleDbHelper
     }
 }
