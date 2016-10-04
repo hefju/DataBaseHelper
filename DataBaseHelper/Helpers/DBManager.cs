@@ -19,8 +19,8 @@ namespace DataBaseHelper.Helpers
          static DBManager()
         {
             DefaultMssql = new SqlHelper("Server=192.168.100.200;Database=JXC;User Id=guest;Password=133;");
-            DefaultSqlite = new SQLiteHelper("");
-            DefaultAccess = new OleDbHelper("");
+            DefaultSqlite = new SQLiteHelper("Data Source=test.db;Version=3;");
+            DefaultAccess = new OleDbHelper("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=test.mdb;User Id=admin;Jet OLEDB:Database Password=1;");
         }
 
         public static SqlHelper GetDefaultMssql()
