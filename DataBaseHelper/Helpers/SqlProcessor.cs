@@ -16,7 +16,7 @@ namespace DataBaseHelper.Helpers
                 return 0;//没有修改也返回1表示保存成功.
             var dtChange = dt.GetChanges();//可能传入没有修改的DataTable
             if (dtChange == null)
-                return 1;//没有修改也返回1表示保存成功.
+                return 0;//没有修改也返回1表示保存成功.
 
             int count=0;
            // SqlHelper db=SqlHelper.getInstance();

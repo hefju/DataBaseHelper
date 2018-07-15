@@ -55,17 +55,19 @@ namespace DataBaseHelper.Helpers
         #region IDBHelper接口
         public int ExecuteNonQuery2(string sql)
         {
+           // if (sql.Contains("--")) return 0;
             return ExecuteNonQuery(sql,new SqlParameter[0]);
         }
 
         public int ExecuteNonQuery(string sql)
         {
+            if (sql.Contains("--")) return 0;
             return ExecuteNonQuery(sql, new SqlParameter[0]);
         }
 
         public object ExecuteScalar(string sql)
         {
-            if (sql.Contains("--")) return null;
+            //if (sql.Contains("--")) return null;
             return ExecuteScalar(ConnectionString, sql);
         }
 
